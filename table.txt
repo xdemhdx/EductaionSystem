@@ -1,0 +1,92 @@
+
+-- Create the 'education' database if it doesn't already exist
+CREATE DATABASE IF NOT EXISTS education;
+
+-- Select the 'education' database for use
+USE education;
+CREATE TABLE Users (
+-- Users Table
+    UserID INT PRIMARY KEY AUTO_INCREMENT,
+    Username VARCHAR(255) NOT NULL UNIQUE,
+    PasswordHash VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) NOT NULL UNIQUE,
+    Role TINYINT NOT NULL DEFAULT 0 
+);
+
+-- Students Table
+CREATE TABLE Students (
+    StudentID INT AUTO_INCREMENT,
+    UserID INT NOT NULL UNIQUE,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
+    Nationality VARCHAR(255),
+    RegistrationDate DATE NOT NULL,
+    PRIMARY KEY (StudentID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
+);
+
+-- Instructors Table
+CREATE TABLE Instructors (
+    InstructorID INT AUTO_INCREMENT,
+    UserID INT NOT NULL UNIQUE,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
+    Department VARCHAR(255),
+    PRIMARY KEY (InstructorID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
+);
+
+-- Courses Table
+CREATE TABLE Courses (
+    CourseID INT PRIMARY KEY AUTO_INCREMENT,
+    Title VARCHAR(255) NOT NULL,
+    Credits INT NOT NULL
+);
+
+-- Enrollments Table (Linked to Instructors)
+CREATE TABLE Enrollments (
+    EnrollmentID INT PRIMARY KEY AUTO_INCREMENT,
+    CourseID INT NOT NULL,
+    StudentID INT NOT NULL,
+    InstructorID INT NOT NULL,
+    EnrollmentDate DATE NOT NULL,
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID) ON DELETE CASCADE,
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID) ON DELETE CASCADE,
+    FOREIGN KEY (InstructorID) REFERENCES Instructors(InstructorID) ON DELETE CASCADE
+);
+
+-- Grades Table
+CREATE TABLE Grades (
+    GradeID INT PRIMARY KEY AUTO_INCREMENT,
+    EnrollmentID INT NOT NULL,
+    GradeValue DECIMAL(3,2) NOT NULL,
+    FOREIGN KEY (EnrollmentID) REFERENCES Enrollments(EnrollmentID) ON DELETE CASCADE
+);
+
+-- Payments Table
+CREATE TABLE Payments (
+    PaymentID INT PRIMARY KEY AUTO_INCREMENT,
+    StudentID INT NOT NULL,
+    Amount DECIMAL(10,2) NOT NULL,
+    PaymentDate DATE NOT NULL,
+    PaymentStatus ENUM('Pending', 'Completed', 'Overdue') NOT NULL,
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID) ON DELETE CASCADE
+);
+
+-- TranscriptRequests Table
+CREATE TABLE TranscriptRequests (
+    RequestID INT PRIMARY KEY AUTO_INCREMENT,
+    StudentID INT NOT NULL,
+    RequestDate DATE NOT NULL,
+    Status ENUM('Pending', 'Fulfilled', 'Denied') NOT NULL,
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID) ON DELETE CASCADE
+);
+
+
+-- GPAs Table
+CREATE TABLE GPAs (
+    GPAID INT PRIMARY KEY AUTO_INCREMENT,
+    StudentID INT NOT NULL,
+    CumulativeGPA DECIMAL(3,2),
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID) ON DELETE CASCADE
+);
