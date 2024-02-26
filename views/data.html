@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple AJAX Example</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("#loadDataBtn").click(function(){
+        $.ajax({
+            url: "/getUsers", // Sending the AJAX request to index.php with the '/getUsers' endpoint
+            type: "GET",
+            dataType: "json",
+            success: function(data){
+                $("#dataContainer").html(data.message);
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                console.error("Error:", textStatus, errorThrown);
+            }
+        });
+    });
+});
+</script>
+</head>
+<body>
+    <button id="loadDataBtn">Load Users</button>
+    <div id="dataContainer">Click the button to load users.</div>
+</body>
+</html>

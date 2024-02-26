@@ -15,7 +15,8 @@ if($url[1]==""){
         $password = filter_input(INPUT_POST,"password");
         $res = Checklogin($username,$password);
         if(!$res==1){
-            print_r("bad login");
+            $errorMessage = "Incorrect username or password.";
+            showLogin($errorMessage);
             die(0);
         }
         session_regenerate_id(true);
@@ -27,11 +28,14 @@ if($url[1]==""){
             print_r("Working");
             header("Location:/admin");
             die(0);
+        }elseif($_SESSION['Role']==2){
+            print_r("Student!!!");
+            die(0);
         }
 
     }elseif($method=="GET"){
         session_destroy();
-        showLogin();
+        showLogin(null);
         die(0);
 
     }
@@ -91,4 +95,23 @@ if($url[1]==""){
         echo "GET Method not allowed";
         die();
     }
+
+    // this method is for testing purpose
+}elseif ($url[1] == "AllUsers") {
+
+     if(!isset($_SESSION["username"])){
+         session_destroy();
+         header("Location:/login");
+         die(0);
+        
+     }else{
+         if($_SESSION["Role"]!="0"){
+             session_destroy();
+             print("Not allowed For reguler Users");
+             die(0);
+         }else{
+             fetchAllUsersInfo();
+             die(0);
+         }
+     }
 }

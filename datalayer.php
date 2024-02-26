@@ -41,6 +41,26 @@ function fetchSingleUser($username){
 
 }
 
+function fetchAllUsers(){
+    $db = dabs();
+
+    $getAllUsers=$db->prepare("select * from Users");
+    $getAllUsers->execute();
+    $resultAllUsers =$getAllUsers->fetchAll(PDO::FETCH_OBJ);
+    $arrayOfUsers=[];
+    foreach($resultAllUsers as $k =>$i){
+        $userObject = New User;
+        $userObject->Userid=$i->UserID;
+        $userObject->Username=$i->Username;
+        $userObject->Email=$i->Email;
+        $userObject->Role=$i->Role;
+        array_push($arrayOfUsers,$userObject);
+    }
+
+    return $arrayOfUsers;
+
+}
+
 function createNewStudent(Student $student , User $user): bool{
     $flag = false;
     try{

@@ -4,22 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <!-- Brand/logo -->
+                <a class="navbar-brand" href="#">Admin Panel</a>
         <div class="container">
-            <!-- Brand/logo -->
-            <a class="navbar-brand" href="#">Admin Panel</a>
+
 
             <!-- Links -->
             <ul class="navbar-nav mr-auto">
-                <!-- Profile link -->
+                <!-- Educations link -->
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Profile</a>
+                    <a class="nav-link" href="/AllUsers">All Users</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">All Courses</a>
+                </li>
+
+
             </ul>
+            
 
             <!-- Logout link -->
             <ul class="navbar-nav">
@@ -116,6 +125,7 @@
                     <button type="submit" class="btn btn-success">Add Course</button>
                 </form>
             </div>
+             
         </div>
     </div>
 
@@ -153,9 +163,11 @@
 
         // JavaScript function to show add user form
         function showAddUserForm() {
+            //allUsersComp
             document.getElementById('formsContainer').style.display = 'block';
             document.getElementById('addUserForm').style.display = 'block';
             document.getElementById('addCourseForm').style.display = 'none';
+            document.getElementById('allUsersComp').style.display = 'none';
         }
 
         // JavaScript function to show add course form
@@ -163,8 +175,10 @@
             document.getElementById('formsContainer').style.display = 'block';
             document.getElementById('addUserForm').style.display = 'none';
             document.getElementById('addCourseForm').style.display = 'block';
+            document.getElementById('allUsersComp').style.display = 'none';
         }
 
+    
 
     </script>
 
