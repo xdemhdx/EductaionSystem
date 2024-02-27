@@ -60,11 +60,24 @@ function fetchAllUsers(){
     return $arrayOfUsers;
 
 }
-
+// a flag to check if its sucess or not 
 function createNewStudent(Student $student , User $user): bool{
     $flag = false;
     try{
         $db = dabs();
+
+        $checkUsername = $db->prepare("SELECT COUNT(*) FROM users WHERE Username = :username OR Email = :email");
+        $checkUsername->bindParam(':username', $user->Username);
+        $checkUsername->bindParam(':email', $user->Email);
+        $checkUsername->execute();
+        $usernameCount = $checkUsername->fetchColumn();
+
+        if ($usernameCount > 0) {
+            // Username already exists or Email, handle the error e.g., return false
+
+            return $flag;
+        }
+        // else continue ; 
         $addUser = $db->prepare("INSERT INTO users (Username, PasswordHash, Email, Role) VALUES (:username, :password, :email, :role)");
         $addUser->bindParam(':username', $user->Username);
         $addUser->bindParam(':password', $user->PasswordHash);

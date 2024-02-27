@@ -1,25 +1,36 @@
 <?php
+// includeing nessacry classes/files
 require_once("classes.php");
 require_once("business.php");
+// getting the requests uri and method from _$SERVER
 $url = $_SERVER["REQUEST_URI"];
 $method = $_SERVER["REQUEST_METHOD"];
+//$url for making it as an array instead of checking it as /login /logout etc .. we can use $url[0]-> the uri
 $url = explode("/",$url);
+// Starting the sessions to indentify the users at each request in the web app
 session_start();
-
+// routing the user to a root page
 if($url[1]==""){
     showSinglePage();
-
+// if the request uri is /login it will check the Method
+// if its a POST then it will do the following
 }else if($url[1]=="login"){
     if($method == "POST"){
+        // getting the input form from the html login page
         $username = filter_input(INPUT_POST,"username");
         $password = filter_input(INPUT_POST,"password");
+        // checking the login credientials
+
         $res = Checklogin($username,$password);
+        //  its obvious lol :D
         if(!$res==1){
             $errorMessage = "Incorrect username or password.";
             showLogin($errorMessage);
             die(0);
         }
+        // This method to prevent session fixation to make sure each session has  unique identifier
         session_regenerate_id(true);
+        // getting the users to from the database storing in sessions > i wont explain everything here 
         $uesrObjectResult = fetchSingleUserInfo($username);
         $_SESSION['username']= $uesrObjectResult->Username;
         $_SESSION['Role']= $uesrObjectResult->Role;
@@ -40,14 +51,15 @@ if($url[1]==""){
 
     }
 
-
+// its obvious what this route do.. handling /admin route
 }elseif($url[1]=="admin"){
     if(!isset($_SESSION["username"])){
         session_destroy();
         header("Location:/login");
         
     }else{
-        if($_SESSION["Role"]!="0"){
+        if($_SESSION["Role"]!=0
+        ){
             session_destroy();
             header("Location:/login");
         }else{
@@ -55,10 +67,12 @@ if($url[1]==""){
             die(0);
         }
     }
+    // Session Kill !!! 
 }elseif($url[1]=="logout"){
     session_destroy();
     header("Location:/login");
     // Below method to add student 
+   // Add_student only authorized admins can do it 
 } elseif ($url[1] == "add_student") {
     // Check if the user is logged in and has the appropriate role
     if (!isset($_SESSION["username"]) || $_SESSION["Role"] != 0) {
@@ -88,7 +102,8 @@ if($url[1]==""){
         $studentObject->nationality=$nationality;
         $studentObject->registrationdate = date("Y-m-d");
         createStundet($studentObject,$userObject);
-        die();
+        die(0);
+        // Get method are not allowd for this route even for admin , thats why i need to handle this 
     } elseif ($method == "GET") {
         // Handle GET requests
         http_response_code(405); // Method Not Allowed
@@ -96,7 +111,7 @@ if($url[1]==""){
         die();
     }
 
-    // this method is for testing purpose
+    // getting all the users from the database its only for admins as it shown
 }elseif ($url[1] == "AllUsers") {
 
      if(!isset($_SESSION["username"])){
@@ -105,7 +120,7 @@ if($url[1]==""){
          die(0);
         
      }else{
-         if($_SESSION["Role"]!="0"){
+         if($_SESSION["Role"]!=0){
              session_destroy();
              print("Not allowed For reguler Users");
              die(0);
