@@ -26,3 +26,10 @@ class Instructor{
 
 }
 
+class Course {
+    public $CourseID;
+    public $code;
+    public $name;
+    public $credits;
+}
+
