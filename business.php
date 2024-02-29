@@ -48,6 +48,19 @@ function showAdminPage(){
     $template = $twig->load($location);
     print_r($template->render());
 }
+function getInstructorInfo(){
+    $result = fetchSingleInstructor($_SESSION["Userid"]);
+    print_r($result);
+    die(0);
+}
+
+function showInstructorPage(){
+    $location = "instructor.html.twig";
+    $twig = theTwig();
+    $template = $twig->load($location);
+    print_r($template->render());
+
+}
 
 
     // this method is for testing purpose -> ignore it ill remove it later

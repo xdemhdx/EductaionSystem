@@ -19,6 +19,26 @@ function Checklogin($username , $password){
 
 }
 
+function fetchSingleInstructor($id){
+    $db = dabs();
+
+    $instructorObject = new Instructor;
+    $getInstructor = $db->prepare("select * from instructors where UserID=:userid");
+    $getInstructor->bindParam("userid",$id);
+    $getInstructor->execute();
+    $resInstructor =  $getInstructor ->fetchAll(PDO::FETCH_OBJ);
+    foreach($resInstructor as $k => $i){
+    $instructorObject->userid=$i->UserID;
+    $instructorObject->firstName=$i->FirstName;
+    $instructorObject->lastName=$i->LastName;
+    $instructorObject->department=$i->Department;
+    }
+
+    return $instructorObject;
+
+
+}
+
 function fetchSingleUser($username){
     $db = dabs();
 
@@ -28,9 +48,6 @@ function fetchSingleUser($username){
     $getUser ->execute();
     $resUser = $getUser ->fetchAll(PDO::FETCH_OBJ);
     foreach($resUser as $k => $i){
-    // $x->room_id = $i->room_id;
-    // $x->building = $i->building;
-    // $x->name = $i->name;
     $userObject->Userid=$i->UserID;
     $userObject->Username=$i->Username;
     $userObject->Role=$i->Role;
@@ -60,6 +77,7 @@ function fetchAllUsers(){
     return $arrayOfUsers;
 
 }
+
 
 function fetchAllCourses(){
 

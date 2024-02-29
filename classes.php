@@ -32,4 +32,11 @@ class Course {
     public $name;
     public $credits;
 }
+class Enrollment {
+    public $enrollmentID;
+    public $courseID;
+    public $studentID;
+    public $instructorID;
+    public $enrollmentDate;
 
+}

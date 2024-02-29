@@ -42,6 +42,9 @@ if($url[1]==""){
         }elseif($_SESSION['Role']==2){
             print_r("Student!!!");
             die(0);
+        }elseif($_SESSION["Role"]==1){
+            header("Location:/instructor");
+            die(0);
         }
 
     }elseif($method=="GET"){
@@ -68,7 +71,24 @@ if($url[1]==""){
         }
     }
     // Session Kill !!! 
-}elseif($url[1]=="logout"){
+}elseif($url[1]=="instructor"){
+    if(!isset($_SESSION["username"])){
+        session_destroy();
+        header("Location:/login");
+        
+    }else{
+        if($_SESSION["Role"]!=1
+        ){
+            session_destroy();
+            header("Location:/login");
+        }else{
+            getInstructorInfo();
+            die(0);
+        }
+    }
+
+}
+elseif($url[1]=="logout"){
     session_destroy();
     header("Location:/login");
     // Below method to add student 
