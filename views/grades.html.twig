@@ -8,16 +8,20 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h2>Select Course:</h2>
+        <h2>Select Course</h2>
+        <br>
+        <br>
+
         <form action="/grade" method="post">
             <div class="form-group">
+            <h3>Course Name:</h3>
                 <select class="form-control" id="courseSelect">
                     {% for courseName, students in courses %}
                         <option value="{{ courseName }}">{{ courseName }}</option>
                     {% endfor %}
                 </select>
             </div>
-        
+            <h3>Student List:</h3>
             <div id="studentsList" class="mt-4">
                 <!-- Students list will be displayed here as dropdown -->
             </div>
