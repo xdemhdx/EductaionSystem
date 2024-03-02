@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Form</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-xrweJ5JCAIA+j9VcfGBY5XSz/7XwUPg4c9OZFeXfBEYDEfo5y4p/ZKeTfFN+jVoh" crossorigin="anonymous">
+    <!-- Custom styles -->
+    <style>
+        /* Custom styles for the centered enrollment box */
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+        }
+        .enrollment-box {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 500px; /* Increased width for the inner box */
+        }
+        /* Style for the green-colored button */
+        .enroll-btn {
+            background-color: green;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%; /* Make button full width */
+            margin-top: 20px; /* Add margin to the top */
+        }
+        /* Add padding between form elements */
+        .form-select {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="enrollment-box">
+                    <h2 class="text-center my-4 d-block">Enrollment Form</h2>
+                    <form action="/enroll" method="post">
+                        <div class="mb-3">
+                            <label for="course" class="form-label">Course:</label>
+                            <select name="course" id="course" class="form-select">
+                                {% for course in courses %}
+                                    <option value="{{ course.CourseID }}">{{ course.code }}-{{course.name}} Credits: ({{course.credits}})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="student" class="form-label">Student:</label>
+                            <select name="student" id="student" class="form-select">
+                                {% for student in students %}
+                                    <option value="{{ student.studentID }}">{{ student.firstName }}-{{student.lastName}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="instructor" class="form-label">Instructor:</label>
+                            <select name="instructor" id="instructor" class="form-select">
+                                {% for instructor in instructors %}
+                                    <option value="{{ instructor.instructorID }}">{{ instructor.firstName }}-{{instructor.lastName}}-{{instructor.instructorID}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn enroll-btn">Enroll</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-G6QLm6G30Oj/64vHsBCVv2PeapB+tS0tD2P72fDTLpnB5h6ZLpsFkaFV9zScPb2j" crossorigin="anonymous"></script>
+</body>
+</html>

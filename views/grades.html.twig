@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Submission</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Select Course:</h2>
+        <form action="/grade" method="post">
+            <div class="form-group">
+                <select class="form-control" id="courseSelect">
+                    {% for courseName, students in courses %}
+                        <option value="{{ courseName }}">{{ courseName }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <div id="studentsList" class="mt-4">
+                <!-- Students list will be displayed here as dropdown -->
+            </div>
+
+            <div class="form-group mt-4">
+                <label for="gradeInput">Grade:</label>
+                <input type="text" class="form-control" id="gradeInput" name="gradeInput" placeholder="Enter Grade">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Grade</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Function to populate the students dropdown when a course is selected
+        function populateStudents(courseName) {
+            var courses = {{ courses|json_encode|raw }};
+            var selectedStudents = courses[courseName];
+            var studentsHtml = '<select class="form-control" name="studentSelect">';
+            selectedStudents.forEach(function(student) {
+                studentsHtml += '<option value="' + student.enrollmentID + '">' + student.firstName + ' ' + student.lastName + '</option>';
+            });
+            studentsHtml += '</select>';
+            $('#studentsList').html(studentsHtml);
+        }
+
+        // Event listener for course selection
+        $('#courseSelect').change(function() {
+            var selectedCourse = $(this).val();
+            populateStudents(selectedCourse);
+        });
+
+        // Initially populate students for the default selected course
+        var initialSelectedCourse = $('#courseSelect').val();
+        populateStudents(initialSelectedCourse);
+    </script>
+</body>
+</html>

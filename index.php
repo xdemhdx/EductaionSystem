@@ -36,7 +36,7 @@ if($url[1]==""){
         $_SESSION['Role']= $uesrObjectResult->Role;
         $_SESSION['Userid']= $uesrObjectResult->Userid;
         if($_SESSION['Role']==0){
-            print_r("Working");
+            // print_r("Working");
             header("Location:/admin");
             die(0);
         }elseif($_SESSION['Role']==2){
@@ -82,7 +82,7 @@ if($url[1]==""){
             session_destroy();
             header("Location:/login");
         }else{
-            getInstructorInfo();
+            showInstructorPage();
             die(0);
         }
     }
@@ -238,7 +238,54 @@ elseif($url[1]=="add_instructor"){
              die(0);
          }
      }
-}elseif($url[1]=="AllCourses"){
+}elseif($url[1]=="grade"){
+    if(!isset($_SESSION["username"])){
+        session_destroy();
+        header("Location:/login");
+        die(0);
+       
+    }else{
+        if($_SESSION["Role"]==1){
+            if($method=="POST"){
+                    print_r("POST method");
+                    $studentEnrollmentID = filter_input(INPUT_POST,"studentSelect",FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    $grade = filter_input(INPUT_POST,"gradeInput",FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                
+                    // Debugging: Print selected course, student enrollment ID, and grade
+                    echo "Selected Student Enrollment ID: " . $studentEnrollmentID . "<br>";
+                    echo "Grade: " . $grade . "<br>";
+
+                // handiling post method
+
+            }else{
+                showGradePage();
+                die(0);
+            }
+        }
+    }
+
+}
+elseif($url[1]=="my_class"){
+    if(!isset($_SESSION["username"])){
+        session_destroy();
+        header("Location:/login");
+        die(0);
+       
+    }else{
+        if($_SESSION["Role"]==1){
+            getInstructorClass($_SESSION["instructorID"]);
+            die(0);
+        }elseif($_SESSION["Role"]==2){
+            print_r("Student");
+
+        }else{
+            print_r("<h1> Not allowed</h1>");
+        }
+    }
+
+
+}
+elseif($url[1]=="AllCourses"){
     if(!isset($_SESSION["username"])){
         session_destroy();
         header("Location:/login");
@@ -259,6 +306,36 @@ elseif($url[1]=="add_instructor"){
 
 
 
+}elseif($url[1]=="enroll"){
+    if(!isset($_SESSION["username"])){
+        session_destroy();
+        header("Location:/login");
+        die(0);
+       
+    }else{
+        if($_SESSION["Role"]!=0){
+            // i could modify this so the normal user does not have to relogin again << ill check this later 
+            session_destroy();
+            print("<h1>Not allowed For reguler Users</h1>");
+            die(0);
+        }else{
+            if($method=="GET"){
+                makeEnroll();
+                die();
+            }elseif($method=="POST"){
+                $courseID = filter_input(INPUT_POST,"course",FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $instructorID = filter_input(INPUT_POST,"instructor",FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $studentID = filter_input(INPUT_POST,"student",FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $enrollmentObject = new Enrollment;
+                $enrollmentObject->courseID=$courseID;
+                $enrollmentObject->instructorID=$instructorID;
+                $enrollmentObject->studentID=$studentID;
+                $enrollmentObject->enrollmentDate= date("Y-m-d");
+                checkEnrollmentBeforeCreate($enrollmentObject);
+                die(0);
+            }
+        }
+    }
 }else{
     notFound();
 }

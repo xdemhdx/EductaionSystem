@@ -10,6 +10,17 @@ function loginCheck($username , $password){
     return $res;
 }
 
+
+function showGradePage(){
+    $result = getStudentsByInstructor($_SESSION["instructorID"]);
+    $location = "grades.html.twig";
+    $twig = theTwig();
+    $template = $twig->load($location);
+    print_r($template->render(["courses"=>$result]));
+    // print_r($result);
+    // die(0);
+
+}
 function notFound(){
     $location = "404.html.twig";
     $twig = theTwig();
@@ -17,6 +28,67 @@ function notFound(){
     print_r($template->render());
 
 }
+
+function getInstructorClass($instructorID){
+
+    $result =getClassesByInstructor($instructorID);
+    $location = "instructorClass.html.twig";
+    $twig = theTwig();
+    $template = $twig->load($location);
+    print_r($template->render(["courses"=>$result]));
+
+
+}   
+
+
+
+// dont forget current Date function !! 
+
+
+function checkEnrollmentBeforeCreate(Enrollment $enrollment){
+    $courseID = intval($enrollment->courseID);
+    $instructorID = intval($enrollment->instructorID);
+    $studentID = intval($enrollment->studentID);
+    if(
+        empty($courseID) || ($courseID<1)||
+        empty($instructorID)|| ($instructorID<1)||
+        empty($studentID) ||  ($studentID<1)
+    ){
+        invalidEntries();
+        die(0);
+
+    }else{
+        $res = checkStudentEnrolled($studentID,$courseID);
+        if($res){
+            AlreadyEnrolled();
+            die(0);
+        }else{
+            $result = createNewEnrollment($enrollment);
+            if($result){
+                SuccessEnrollment();
+                die(0);
+
+            }else{
+                NotSuccessEnrollment();
+                die(0);
+            }
+        }
+    }
+
+
+}
+function makeEnroll(){
+    $instructors = getAllInstructorInfo();
+    $courses = fetchAllCourses();
+    $students =getAllStudentInfo();
+    $location = "enrollment.html.twig";
+    $twig = theTwig();
+    $template = $twig->load($location);
+    print_r($template->render(["courses"=>$courses,"instructors"=>$instructors,"students"=>$students]));
+
+}
+
+
 
 function notAllowed(){
     $location = "403.html.twig";
@@ -48,17 +120,19 @@ function showAdminPage(){
     $template = $twig->load($location);
     print_r($template->render());
 }
-function getInstructorInfo(){
-    $result = fetchSingleInstructor($_SESSION["Userid"]);
-    print_r($result);
-    die(0);
-}
+// function getInstructorInfo(){
+//     $result = fetchSingleInstructor($_SESSION["Userid"]);
+//     return $result;
+// }
 
 function showInstructorPage(){
+
+    $instructor = fetchSingleInstructor($_SESSION["Userid"]);
+    $_SESSION["instructorID"]=$instructor->instructorID;
     $location = "instructor.html.twig";
     $twig = theTwig();
     $template = $twig->load($location);
-    print_r($template->render());
+    print_r($template->render(["instructor"=>$instructor]));
 
 }
 
@@ -102,7 +176,7 @@ function createCourse(Course $course){
 }
 
 
-
+// is_int dont forget convert into intval() !! 
 function checkCourseBeforeCreate(Course $course){
 
     $validCredits = [1, 2, 3, 4, 9];
@@ -155,6 +229,8 @@ function createStudent(Student $stundet , User $user){
     return createNewStudent($stundet,$user);
 }
 // i seprated this function because ill use it for all roles
+
+// is_int dont forget convert into intval() !! 
 function checkUserEntries(User $user){
     $passwordLength = strlen($user->PasswordHash); // Assuming PasswordHash is the hashed password
     $validRoles = [0, 1, 2];
@@ -171,6 +247,8 @@ function checkUserEntries(User $user){
 
 }
 
+
+// is_int dont forget convert into intval() !! 
 function checkInstructorBeforeCreate(Instructor $instructor ,User $user ){
     $namePattern = '/^[A-Za-z]+$/';
     if (
@@ -194,6 +272,7 @@ function checkInstructorBeforeCreate(Instructor $instructor ,User $user ){
 
 
 
+// is_int dont forget convert into intval() !!  
 function checkStudentBeforeCreate(Student $student , User $user){
     $namePattern = '/^[A-Za-z]+$/'; // Alphabetic characters only
     // check for empty and illegal values before procedding
@@ -210,7 +289,7 @@ function checkStudentBeforeCreate(Student $student , User $user){
         $res = createStudent($student,$user);
         if($res){
                 scucessMessage();
-        }else{
+        }else{  
                 notSuccesUserCreation();
         }
     }
@@ -237,7 +316,7 @@ function invalidEntries(){
 }
 
 function scucessMessage(){
-    echo "<div id='successMessage'>Success</div>";
+    echo "<div id='successMessage'><h1>Success</h1></div>";
     echo "<script>
             setTimeout(function() {
                 window.location.href = '/admin';
@@ -255,5 +334,39 @@ function notSuccesUserCreation(){
             }, 3000);
           </script>";
 
+
+}
+
+function AlreadyEnrolled(){
+    echo "<div style='color: red; text-align: center;' id='successMessage'><h1>Student Already Enrolled in this Course</h1></div>";
+
+
+    echo "<script>
+            setTimeout(function() {
+                window.location.href = '/enroll';
+            }, 3000);
+          </script>";
+
+}
+
+
+function NotSuccessEnrollment(){
+    echo "<div style='color:red; text-align:center;' id='errorMessage'><h1>Enrollment Not successfull</h1></div>";
+    echo "<script>
+            setTimeout(function() {
+                window.location.href = '/enroll';
+            }, 3000);
+          </script>";
+
+}
+
+
+function SuccessEnrollment(){
+    echo "<div style='color:green; text-align:center;' id='errorMessage'><h1>Enrollment Successfull redirecting...</h1></div>";
+    echo "<script>
+            setTimeout(function() {
+                window.location.href = '/enroll';
+            }, 3000);
+          </script>";
 
 }

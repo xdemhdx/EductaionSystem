@@ -11,6 +11,7 @@ class User{
 }
 
 class Student{
+    public $studentID;
     public $userid;
     public $firstName ;
     public $lastName;
@@ -19,6 +20,7 @@ class Student{
 }
 
 class Instructor{
+    public $instructorID;
     public $userid;
     public $firstName ;
     public $lastName;
@@ -39,4 +41,10 @@ class Enrollment {
     public $instructorID;
     public $enrollmentDate;
 
+}
+
+
+class InstructorCourse {
+    public $courseName;
+    public $enrollmentDate;
 }
