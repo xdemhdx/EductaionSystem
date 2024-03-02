@@ -34,6 +34,40 @@ function checkStudentEnrolled($studentID,$courseID){
 
 
 }
+
+
+function assignNewGrade($enrollment,$grade){
+    $db=dabs();
+    $newGrade= $db->prepare("INSERT INTO grades(EnrollmentID , GradeValue) VALUES (:eid,:value); ");
+    $newGrade->bindParam(":eid",$enrollment);
+    $newGrade->bindParam(":value",$grade);
+    $newGrade->execute();
+    return true;
+}
+
+function checkBeforeAssignNewGrade($enrollmentID){
+    $flag = false;
+    $db=dabs();
+    $newGrade = $db->prepare("SELECT COUNT(*) From grades WHERE EnrollmentID = :eid");
+    $newGrade->bindParam(":eid",$enrollmentID);
+    $newGrade->execute();
+    $count=$newGrade->fetchColumn();
+    return $count>0; // if true then it should not proccedd and renter the grade again ;; :) 
+
+
+}
+// to avoid instructor tamper the data
+function validateInstructorBeforeSubmissionGrade($enrollmentID, $instructorID){
+    $db=dabs();
+    $checkEnrollment = $db->prepare("SELECT COUNT(*) FROM Enrollments WHERE EnrollmentID = :eid AND InstructorID = :iid;");
+    $checkEnrollment->bindParam(":eid", $enrollmentID);
+    $checkEnrollment->bindParam(":iid", $instructorID);
+    $checkEnrollment->execute();
+    $count = $checkEnrollment->fetchColumn(); // Fetch the count directly
+    return $count > 0; // Return true if count is greater than 0, indicating the enrollment is for the instructor
+
+
+}
 //// testing
 function getStudentsByInstructor($instructorID){
     $studentsByCourse = [];

@@ -11,6 +11,52 @@ function loginCheck($username , $password){
 }
 
 
+function assignNewGradeToStudent($studentEnrollmentID,$grade){
+    $instructorID = $_SESSION["instructorID"];
+    $grade = intval($grade);
+    $studentEnrollmentID=intval($studentEnrollmentID);
+
+    if (empty($studentEnrollmentID) || empty($grade) ||
+    !is_int($studentEnrollmentID) || !is_int($grade) ||
+    $studentEnrollmentID < 0 || $grade < 0 || $grade > 100) 
+    {
+        invalidEntries();  
+        die(0);
+    }
+    $result = validateEnrollmentForInstructor($studentEnrollmentID,$instructorID);
+    if(!$result){
+        print_r("<h1>unauthorized</h1>");
+        die(0);
+    }else{
+        $res = checkBeforeAssignNewGrade($studentEnrollmentID);
+        if($res){
+            print_r("<h1>Its there you cannot insert into it again!!!</h1> ");
+            die(0);
+
+        }else{
+            $theResult = assignNewGrade($studentEnrollmentID,$grade);
+            if($theResult){
+
+                newGradeSuccess();
+                die(0);
+
+            }else{
+                print_r("Not Success");
+                die(0);
+            }
+        }
+
+    }
+
+
+
+}
+
+function validateEnrollmentForInstructor($enrollmentID, $instructorID){
+    return validateInstructorBeforeSubmissionGrade($enrollmentID, $instructorID);
+}
+
+
 function showGradePage(){
     $result = getStudentsByInstructor($_SESSION["instructorID"]);
     $location = "grades.html.twig";
@@ -368,5 +414,19 @@ function SuccessEnrollment(){
                 window.location.href = '/enroll';
             }, 3000);
           </script>";
+
+}
+
+
+
+function newGradeSuccess(){
+
+    echo "<div style='color:green; text-align:center;' id='errorMessage'><h1>Grade Insertion Successfull redirecting...</h1></div>";
+    echo "<script>
+            setTimeout(function() {
+                window.location.href = '/grade';
+            }, 3000);
+          </script>";
+
 
 }

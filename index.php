@@ -245,17 +245,14 @@ elseif($url[1]=="add_instructor"){
         die(0);
        
     }else{
+
+        //validateEnrollmentForInstructor($enrollmentID, $instructorID))
         if($_SESSION["Role"]==1){
             if($method=="POST"){
-                    print_r("POST method");
                     $studentEnrollmentID = filter_input(INPUT_POST,"studentSelect",FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $grade = filter_input(INPUT_POST,"gradeInput",FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                
-                    // Debugging: Print selected course, student enrollment ID, and grade
-                    echo "Selected Student Enrollment ID: " . $studentEnrollmentID . "<br>";
-                    echo "Grade: " . $grade . "<br>";
-
-                // handiling post method
+                    assignNewGradeToStudent($studentEnrollmentID,$grade);
+                    die(0);
 
             }else{
                 showGradePage();
