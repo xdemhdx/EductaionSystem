@@ -125,6 +125,82 @@ function getStudentsByInstructor($instructorID){
     return $studentsByCourse;
 }
 
+function getStudentGrades($studentID){
+    $db = dabs();
+    $arrayOfClasses = [];
+    $uniqueCourseIDs = [];
+
+// Querying classes from the enrollment table
+    $classes = $db->prepare("SELECT EnrollmentID, CourseID FROM Enrollments WHERE StudentID = :id;");
+    $classes->bindParam(":id", $studentID);
+    $classes->execute();
+    $classesResult = $classes->fetchAll(PDO::FETCH_OBJ);
+
+// Fetching course names and grades from the enrollment object to get the IDs
+    foreach ($classesResult as $class) {
+    // Fetch course name
+        $courseQuery = $db->prepare("SELECT name FROM Courses WHERE CourseID = :courseID;");
+        $courseQuery->bindParam(":courseID", $class->CourseID);
+        $courseQuery->execute();
+        $courseResult = $courseQuery->fetch(PDO::FETCH_OBJ);
+
+        // Fetch grade
+        $gradeQuery = $db->prepare("SELECT GradeValue FROM Grades WHERE EnrollmentID = :enrollmentID;");
+        $gradeQuery->bindParam(":enrollmentID", $class->EnrollmentID);
+        $gradeQuery->execute();
+        $gradeResult = $gradeQuery->fetch(PDO::FETCH_OBJ);
+
+        // Creating StudentGrade object
+        $studentGrade = new StudentGrade();
+        $studentGrade->CourseName = $courseResult->name;
+        $studentGrade->Grade = $gradeResult ? $gradeResult->GradeValue : "";
+
+        // Adding StudentGrade object to array
+        array_push($arrayOfClasses, $studentGrade);
+
+        }
+
+        return $arrayOfClasses;
+
+
+
+}
+
+function getClassesByStudent($studentID){
+    $arrayOfClasses = [];
+    $uniqueCourseIDs = []; // Track unique course IDs
+
+    
+    try{
+        $db = dabs();
+        $classes = $db->prepare("SELECT * FROM Enrollments WHERE StudentID = :id;");
+        $classes->bindParam(":id", $studentID);
+        $classes->execute();
+        $classesResult = $classes->fetchAll(PDO::FETCH_OBJ);
+        
+        foreach($classesResult as $k => $i){
+            // Check if course ID already exists in uniqueCourseIDs array
+            if(!in_array($i->CourseID, $uniqueCourseIDs)){
+                $InstructorCourse = new InstructorCourse;
+
+                $courseQuery = $db->prepare("SELECT * FROM courses WHERE CourseID = :courseID");
+                $courseQuery->bindParam(":courseID", $i->CourseID);
+                $courseQuery->execute();
+                $courseResult = $courseQuery->fetch(PDO::FETCH_OBJ);
+                $InstructorCourse->courseName=$courseResult->name;
+                $InstructorCourse->enrollmentDate=$i->EnrollmentDate;
+                $uniqueCourseIDs[] = $i->CourseID;
+                array_push($arrayOfClasses,$InstructorCourse);
+            }
+        }
+
+    } catch(PDOException $e){
+        echo "Error: " . $e->getMessage();
+    }
+
+    return $arrayOfClasses;
+}
+
 
 
 
@@ -422,6 +498,22 @@ function checkUserExist(User $user){
     }
 
     
+
+
+}
+
+function fetchSingleStudent($id){
+    $db= dabs();
+    $student = New Student;
+    $getStudent = $db->prepare("SELECT * from Students where UserID  = :id;");
+    $getStudent->bindParam(":id",$id);
+    $getStudent->execute();
+    $studentResult = $getStudent->fetch(PDO::FETCH_OBJ);
+    $student->studentID=$studentResult->StudentID;
+    $student->userid=$studentResult->UserID;
+    $student->firstName=$studentResult->FirstName;
+    $student->lastName=$studentResult->LastName;
+    return $student;
 
 
 }

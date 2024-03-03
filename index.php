@@ -40,7 +40,7 @@ if($url[1]==""){
             header("Location:/admin");
             die(0);
         }elseif($_SESSION['Role']==2){
-            print_r("Student!!!");
+            header("Location:/student");
             die(0);
         }elseif($_SESSION["Role"]==1){
             header("Location:/instructor");
@@ -55,6 +55,23 @@ if($url[1]==""){
     }
 
 // its obvious what this route do.. handling /admin route
+}elseif($url[1]=="student"){
+    if(!isset($_SESSION["username"])){
+        session_destroy();
+        header("Location:/login");
+        
+    }else{  
+        if($_SESSION["Role"]!=2
+        ){
+            session_destroy();
+            header("Location:/login");
+        }else{
+            showStudentPage();
+            die(0);
+        }
+
+    }   
+
 }elseif($url[1]=="admin"){
     if(!isset($_SESSION["username"])){
         session_destroy();
@@ -245,7 +262,6 @@ elseif($url[1]=="add_instructor"){
         die(0);
        
     }else{
-
         //validateEnrollmentForInstructor($enrollmentID, $instructorID))
         if($_SESSION["Role"]==1){
             if($method=="POST"){
@@ -258,6 +274,14 @@ elseif($url[1]=="add_instructor"){
                 showGradePage();
                 die(0);
             }
+        }elseif($_SESSION["Role"]==2){
+            getStudentGrade();
+            
+
+
+        }else{
+            print_r("<h1>not allowed</h1>");
+            die(0);
         }
     }
 
@@ -273,7 +297,8 @@ elseif($url[1]=="my_class"){
             getInstructorClass($_SESSION["instructorID"]);
             die(0);
         }elseif($_SESSION["Role"]==2){
-            print_r("Student");
+            getStudentClass($_SESSION["studentID"]);
+            die(0);
 
         }else{
             print_r("<h1> Not allowed</h1>");

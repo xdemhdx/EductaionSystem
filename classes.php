@@ -48,3 +48,10 @@ class InstructorCourse {
     public $courseName;
     public $enrollmentDate;
 }
+
+
+class StudentGrade {
+    public $CourseName;
+    public $Grade;
+
+}

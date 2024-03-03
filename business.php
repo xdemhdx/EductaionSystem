@@ -52,6 +52,16 @@ function assignNewGradeToStudent($studentEnrollmentID,$grade){
 
 }
 
+function showStudentPage(){
+    $result = fetchSingleStudent($_SESSION["Userid"]);
+    $_SESSION["studentID"]=$result->studentID;
+    $location = "student.html.twig";
+    $twig = theTwig();
+    $template = $twig->load($location);
+    print_r($template->render(["student"=>$result]));
+
+}
+
 function validateEnrollmentForInstructor($enrollmentID, $instructorID){
     return validateInstructorBeforeSubmissionGrade($enrollmentID, $instructorID);
 }
@@ -78,14 +88,34 @@ function notFound(){
 function getInstructorClass($instructorID){
 
     $result =getClassesByInstructor($instructorID);
-    $location = "instructorClass.html.twig";
+    $location = "MyClass.html.twig";
     $twig = theTwig();
     $template = $twig->load($location);
     print_r($template->render(["courses"=>$result]));
 
 
-}   
+}
+function getStudentClass($studentID){
+    $result =getClassesByStudent($studentID);
+    $location = "MyClass.html.twig";
+    $twig = theTwig();
+    $template = $twig->load($location);
+    print_r($template->render(["courses"=>$result]));
+    
+}
 
+
+function getStudentGrade(){
+    $studentID = $_SESSION["studentID"];
+    $result = getStudentGrades($studentID);
+    // print_r($result);
+    // die(0);
+    $location = "studentgrade.html.twig";
+    $twig = theTwig();
+    $template = $twig->load($location);
+    print_r($template->render(["courses"=>$result]));
+
+}
 
 
 // dont forget current Date function !! 

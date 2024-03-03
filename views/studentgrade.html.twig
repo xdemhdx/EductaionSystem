@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Grades</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <br>
+    <br>
+
+  <div class="container">
+    <h1 class="text-center">Course Grades</h1>
+    <br>
+    <br>
+    <div class="row">
+      {% for course in courses %}
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <h5 class="card-title">Course:</h5>
+                  <p class="card-text">{{ course.CourseName }}</p>
+                </div>
+                <div class="col-md-6">
+                  <h5 class="card-title">Overall Grade:</h5>
+                  {% if course.Grade is empty %}
+                    <p class="card-text"><span class="text-warning">Pending</span></p>
+                  {% else %}
+                           {% if course.Grade <60 %}
+                              <p class="card-text text-danger font-weight-bold">{{ course.Grade }} Fail</p>
+                              {% else %}
+                              <p class="card-text text-success font-weight-bold">{{ course.Grade }} Pass</p>
+                              {% endif %}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+</html>
