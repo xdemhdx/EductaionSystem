@@ -1,0 +1,101 @@
+CREATE DATABASE `education` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+
+CREATE TABLE `adminlog` (
+  `LogID` int NOT NULL AUTO_INCREMENT,
+  `AdminID` int DEFAULT NULL,
+  `Action` varchar(255) NOT NULL,
+  `TableName` varchar(255) NOT NULL,
+  `RecordID` int DEFAULT NULL,
+  `ActionDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`LogID`),
+  KEY `AdminID` (`AdminID`)
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `courses` (
+  `CourseID` int NOT NULL AUTO_INCREMENT,
+  `code` varchar(64) NOT NULL,
+  `name` varchar(64) NOT NULL,
+  `credits` int NOT NULL,
+  PRIMARY KEY (`CourseID`),
+  UNIQUE KEY `code_UNIQUE` (`code`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `enrollments` (
+  `EnrollmentID` int NOT NULL AUTO_INCREMENT,
+  `CourseID` int NOT NULL,
+  `StudentID` int NOT NULL,
+  `InstructorID` int NOT NULL,
+  `EnrollmentDate` date NOT NULL,
+  PRIMARY KEY (`EnrollmentID`),
+  KEY `CourseID` (`CourseID`),
+  KEY `StudentID` (`StudentID`),
+  KEY `InstructorID` (`InstructorID`)
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `gpas` (
+  `GPAID` int NOT NULL AUTO_INCREMENT,
+  `StudentID` int NOT NULL,
+  `CumulativeGPA` decimal(3,2) DEFAULT NULL,
+  PRIMARY KEY (`GPAID`),
+  KEY `StudentID` (`StudentID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `grades` (
+  `GradeID` int NOT NULL AUTO_INCREMENT,
+  `EnrollmentID` int NOT NULL,
+  `GradeValue` int NOT NULL,
+  PRIMARY KEY (`GradeID`),
+  UNIQUE KEY `EnrollmentID_UNIQUE` (`EnrollmentID`)
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `instructors` (
+  `InstructorID` int NOT NULL AUTO_INCREMENT,
+  `UserID` int NOT NULL,
+  `FirstName` varchar(255) NOT NULL,
+  `LastName` varchar(255) NOT NULL,
+  `Department` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`InstructorID`),
+  UNIQUE KEY `UserID` (`UserID`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `payments` (
+  `PaymentID` int NOT NULL AUTO_INCREMENT,
+  `StudentID` int NOT NULL,
+  `Amount` decimal(10,2) NOT NULL,
+  `PaymentDate` date NOT NULL,
+  `PaymentStatus` enum('Pending','Completed','Overdue') NOT NULL,
+  PRIMARY KEY (`PaymentID`),
+  KEY `StudentID` (`StudentID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `users` (
+  `UserID` int NOT NULL AUTO_INCREMENT,
+  `Username` varchar(32) NOT NULL,
+  `PasswordHash` varchar(255) NOT NULL,
+  `Email` varchar(32) NOT NULL,
+  `Role` tinyint NOT NULL DEFAULT '0',
+  PRIMARY KEY (`UserID`),
+  UNIQUE KEY `Username` (`Username`),
+  UNIQUE KEY `Email` (`Email`)
+) ENGINE=MyISAM AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `transcriptrequests` (
+  `RequestID` int NOT NULL AUTO_INCREMENT,
+  `StudentID` int NOT NULL,
+  `RequestDate` date NOT NULL,
+  `Status` enum('Pending','Fulfilled','Denied') NOT NULL,
+  PRIMARY KEY (`RequestID`),
+  KEY `StudentID` (`StudentID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `students` (
+  `StudentID` int NOT NULL AUTO_INCREMENT,
+  `UserID` int NOT NULL,
+  `FirstName` varchar(255) NOT NULL,
+  `LastName` varchar(255) NOT NULL,
+  `Nationality` varchar(255) DEFAULT NULL,
+  `RegistrationDate` date NOT NULL,
+  PRIMARY KEY (`StudentID`),
+  UNIQUE KEY `UserID` (`UserID`)
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
