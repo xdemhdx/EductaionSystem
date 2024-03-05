@@ -55,3 +55,12 @@ class StudentGrade {
     public $Grade;
 
 }
+
+class Payment {
+    public $name;
+    public $studentID;
+    public $credits;
+    public $amount;
+
+
+}

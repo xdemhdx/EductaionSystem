@@ -52,6 +52,18 @@ function assignNewGradeToStudent($studentEnrollmentID,$grade){
 
 }
 
+function showFinancialPage(){
+    $payment = new Payment;
+    $payment->studentID=$_SESSION["studentID"];
+    $res = getFees($payment);
+    // print_r($res);
+    // die(0);
+    $location = "payment.html.twig";
+    $twig = theTwig();
+    $template = $twig->load($location);
+    print_r($template->render(["payment"=>$res]));
+
+}
 function showStudentPage(){
     $result = fetchSingleStudent($_SESSION["Userid"]);
     $_SESSION["studentID"]=$result->studentID;
@@ -310,9 +322,10 @@ function createStudent(Student $stundet , User $user){
 function checkUserEntries(User $user){
     $passwordLength = strlen($user->PasswordHash); // Assuming PasswordHash is the hashed password
     $validRoles = [0, 1, 2];
-    $usernamePattern = '/^[A-Za-z0-9]+$/'; // Alphanumeric characters only
+    $emailPattern= '/^[a-zA-Z0-9-_]{4,20}@udst\.edu\.qa$/';
+    $usernamePattern = '/^6\d{7}+$/'; //6XXXXXXX is only accepted as UserName
     if(empty($user->Username) || !preg_match($usernamePattern, $user->Username) ||
-    empty($user->PasswordHash) || empty($user->Email) ||
+    empty($user->PasswordHash) || empty($user->Email) || !preg_match($emailPattern,$user->Email)||
     !in_array($user->Role, $validRoles) || $passwordLength <= 8){
 
         return false;

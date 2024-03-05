@@ -9,9 +9,15 @@ $method = $_SERVER["REQUEST_METHOD"];
 $url = explode("/",$url);
 // Starting the sessions to indentify the users at each request in the web app
 session_start();
-// routing the user to a root page
+
+// generating csrf token 
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); // Generate a random token
+}
+// routing the user to a login page
+
 if($url[1]==""){
-    showSinglePage();
+    header("Location:/login");
 // if the request uri is /login it will check the Method
 // if its a POST then it will do the following
 }else if($url[1]=="login"){
@@ -358,6 +364,32 @@ elseif($url[1]=="AllCourses"){
             }
         }
     }
+}elseif($url[1]=="financial"){
+    if(!isset($_SESSION["username"])){
+        session_destroy();
+        header("Location:/login");
+        die(0);
+       
+    }else{
+
+        if($_SESSION["Role"]!=2){
+            session_destroy();
+            print("<h1>Not allowed/h1>");
+            die(0);
+        }else{
+            if($method=="POST"){
+
+            }elseif($method=="GET"){
+                showFinancialPage();
+            }
+
+        }
+
+
+    }
+
+
 }else{
     notFound();
+
 }

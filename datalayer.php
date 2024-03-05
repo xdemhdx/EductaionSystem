@@ -18,7 +18,25 @@ function Checklogin($username , $password){
     return $res;
 
 }
+function getFees(Payment $payment){
+    $db=dabs();
+    $arrayOfResults=[];
+    $getFee=$db->prepare("SELECT Courses.name , Courses.credits FROM Enrollments
+    JOIN Courses ON Enrollments.CourseID = Courses.CourseID
+    WHERE Enrollments.StudentID = :studentID");
+    $getFee->bindParam("studentID",$payment->studentID);
+    $getFee->execute();
+    $getFeeResult = $getFee->fetchAll(PDO::FETCH_OBJ);
+    foreach($getFeeResult as $k =>$i){
+        $newObject = new $payment;
+        $newObject->name=$i->name;
+        $newObject->credits=$i->credits;
+        array_push($arrayOfResults,$newObject);
+    }
+    return $arrayOfResults;
 
+
+}
 function checkStudentEnrolled($studentID,$courseID){
     $db = dabs();
 
